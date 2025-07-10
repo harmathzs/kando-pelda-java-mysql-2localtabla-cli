@@ -1,8 +1,5 @@
 import java.sql.*;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class MysqlService {
     public static Map<String, List<Map<String, Object>>> getDogsAndOwners(String dbname, String username, String pass) {
@@ -94,6 +91,54 @@ public class MysqlService {
 
         return results;
     }
+
+    public static List<Dog> queryDogs(String dbname, String username, String pass, Set<Integer> ids) {
+        List<Dog> dogs = new ArrayList<>();
+        if (ids == null || ids.isEmpty()) {
+            return dogs; // Or optionally: fetch all dogs if ids is empty
+        }
+
+        String url = "jdbc:mysql://localhost:3306/" + dbname + "?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC";
+        // Build the SQL query with IN clause
+        String sb = "SELECT d.id AS dog_id, d.name AS dog_name, d.age, d.male, " +
+                "o.id AS owner_id, o.name AS owner_name " +
+                "FROM dogs d LEFT JOIN owners o ON d.ownerid = o.id " +
+                "WHERE d.id IN (" +
+                String.join(",", Collections.nCopies(ids.size(), "?")) +
+                ")";
+
+        try (
+                Connection conn = DriverManager.getConnection(url, username, pass);
+                PreparedStatement stmt = conn.prepareStatement(sb)
+        ) {
+            int idx = 1;
+            for (int id : ids) {
+                stmt.setInt(idx++, id);
+            }
+
+            ResultSet rs = stmt.executeQuery();
+            while (rs.next()) {
+                int dogId = rs.getInt("dog_id");
+                String dogName = rs.getString("dog_name");
+                float age = rs.getFloat("age");
+                boolean male = rs.getBoolean("male");
+
+                int ownerId = rs.getInt("owner_id");
+                String ownerName = rs.getString("owner_name");
+                Owner owner = null;
+                if (!rs.wasNull()) {
+                    owner = new Owner(ownerId, ownerName);
+                }
+
+                Dog dog = new Dog(dogId, dogName, age, male, owner);
+                dogs.add(dog);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return dogs;
+    }
+
     public static void upsertDogs() {
 
     }

@@ -1,8 +1,11 @@
 import com.mysql.cj.xdevapi.JsonParser;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 public class MysqlTest {
     @Test
@@ -20,6 +23,24 @@ public class MysqlTest {
             // {owner_name=Mia Gordon, owner_id=3}]}
 
         // TODO - Owners can appear duplicated! See: John Smith
+
+        Assertions.assertNotNull(results);
+    }
+
+    @Test
+    public void testqueryDogsWithIds() {
+        Set<Integer> dogIds = new HashSet<>();
+        dogIds.add(1);
+        dogIds.add(2);
+
+        List<Dog> dogs = MysqlService.queryDogs("dogs_and_owners", "root", "", dogIds);
+        System.out.println(dogs); // [Dog@263121b, Dog@41dabe47]
+
+        Assertions.assertEquals(2, dogs.size());
+    }
+    @Test
+    public void testqueryDogsWithoutIds() {
+
     }
 
     @Test
