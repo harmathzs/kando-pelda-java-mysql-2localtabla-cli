@@ -142,6 +142,48 @@ public class MysqlService {
         return dogs;
     }
 
+    public static List<Owner> queryOwners(String dbname, String username, String pass, Set<Integer> ids) {
+        List<Owner> owners = new ArrayList<>();
+
+        String url = "jdbc:mysql://localhost:3306/"+dbname;
+        String query = "SELECT id, name FROM owners ";
+        if (ids != null && !ids.isEmpty()) {
+            query+="WHERE id IN (";
+            query+=String.join(",", Collections.nCopies(ids.size(), "?"));
+            query+=")";
+        }
+        System.out.println("query: "+query); // SELECT id, name FROM owners WHERE id IN (?,?)
+
+        try {
+            // Load MySQL JDBC Driver
+            Class.forName("com.mysql.cj.jdbc.Driver");
+
+            // Establish connection
+            Connection conn = DriverManager.getConnection(url, username, pass);
+
+            // Create statement and execute query
+            PreparedStatement stmt = conn.prepareStatement(query);
+            if (ids != null && !ids.isEmpty()) {
+                int idx = 1;
+                for (Integer id : ids) {
+                    stmt.setInt(idx++, id);
+                }
+            }
+            ResultSet rs = stmt.executeQuery();
+
+            // Process the result set
+            while (rs.next()) {
+                int id = rs.getInt("id");
+                String name = rs.getString("name");
+                if (name!=null) owners.add(new Owner(id, name));
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return owners;
+    }
+
     public static void upsertDogs() {
 
     }

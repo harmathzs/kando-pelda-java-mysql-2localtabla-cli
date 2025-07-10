@@ -42,6 +42,22 @@ public class MysqlTest {
     }
 
     @Test
+    public void testqueryOwnersWithIds() {
+        Set<Integer> ownerIds = new HashSet<>(Arrays.asList(1,2));
+        List<Owner> owners = MysqlService.queryOwners("dogs_and_owners", "root", "", ownerIds);
+        System.out.println(owners);
+        Assertions.assertFalse(owners.isEmpty());
+        Assertions.assertEquals(2, owners.size());
+    }
+
+    @Test
+    public void testqueryOwnersWithoutIds() {
+        List<Owner> owners = MysqlService.queryOwners("dogs_and_owners", "root", "", Collections.emptySet());
+        System.out.println(owners);
+        Assertions.assertFalse(owners.isEmpty());
+    }
+
+    @Test
     public void testupsertDogs() {
         MysqlService.upsertDogs();
     }
