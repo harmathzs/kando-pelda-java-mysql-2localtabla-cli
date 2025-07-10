@@ -94,26 +94,29 @@ public class MysqlService {
 
     public static List<Dog> queryDogs(String dbname, String username, String pass, Set<Integer> ids) {
         List<Dog> dogs = new ArrayList<>();
-        if (ids == null || ids.isEmpty()) {
-            return dogs; // Or optionally: fetch all dogs if ids is empty
-        }
 
         String url = "jdbc:mysql://localhost:3306/" + dbname + "?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC";
-        // Build the SQL query with IN clause
-        String sb = "SELECT d.id AS dog_id, d.name AS dog_name, d.age, d.male, " +
-                "o.id AS owner_id, o.name AS owner_name " +
-                "FROM dogs d LEFT JOIN owners o ON d.ownerid = o.id " +
-                "WHERE d.id IN (" +
-                String.join(",", Collections.nCopies(ids.size(), "?")) +
-                ")";
+        // Build the SQL query
+        StringBuilder sb = new StringBuilder();
+        sb.append("SELECT d.id AS dog_id, d.name AS dog_name, d.age, d.male, ")
+                .append("o.id AS owner_id, o.name AS owner_name ")
+                .append("FROM dogs d LEFT JOIN owners o ON d.ownerid = o.id ");
+
+        if (ids != null && !ids.isEmpty()) {
+            sb.append("WHERE d.id IN (");
+            sb.append(String.join(",", Collections.nCopies(ids.size(), "?")));
+            sb.append(")");
+        }
 
         try (
                 Connection conn = DriverManager.getConnection(url, username, pass);
-                PreparedStatement stmt = conn.prepareStatement(sb)
+                PreparedStatement stmt = conn.prepareStatement(sb.toString())
         ) {
-            int idx = 1;
-            for (int id : ids) {
-                stmt.setInt(idx++, id);
+            if (ids != null && !ids.isEmpty()) {
+                int idx = 1;
+                for (Integer id : ids) {
+                    stmt.setInt(idx++, id);
+                }
             }
 
             ResultSet rs = stmt.executeQuery();

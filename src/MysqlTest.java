@@ -2,10 +2,7 @@ import com.mysql.cj.xdevapi.JsonParser;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 public class MysqlTest {
     @Test
@@ -29,9 +26,7 @@ public class MysqlTest {
 
     @Test
     public void testqueryDogsWithIds() {
-        Set<Integer> dogIds = new HashSet<>();
-        dogIds.add(1);
-        dogIds.add(2);
+        Set<Integer> dogIds = new HashSet<>(Arrays.asList(1, 2));
 
         List<Dog> dogs = MysqlService.queryDogs("dogs_and_owners", "root", "", dogIds);
         System.out.println(dogs); // [Dog@263121b, Dog@41dabe47]
@@ -40,7 +35,10 @@ public class MysqlTest {
     }
     @Test
     public void testqueryDogsWithoutIds() {
+        List<Dog> dogs = MysqlService.queryDogs("dogs_and_owners", "root", "", Collections.emptySet());
+        System.out.println(dogs); // [Dog@691ff4fe, Dog@3d426638, Dog@1b6a9bb9]
 
+        Assertions.assertFalse(dogs.isEmpty());
     }
 
     @Test
