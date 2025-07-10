@@ -59,21 +59,31 @@ public class MysqlTest {
 
     @Test
     public void testupsertDogs() {
-        MysqlService.upsertDogs();
+        Dog[] dogs = new Dog[2];
+        dogs[0] = new Dog(1, "Fido", 1, true, null);
+        dogs[1] = new Dog(2, "Fifi", 2, false, null);
+        MysqlService.upsertDogs(dogs);
     }
 
     @Test
     public void testupsertOwners() {
-        MysqlService.upsertOwners();
+        Owner[] owners = new Owner[2];
+        owners[0] = new Owner(1, "John Smith");
+        owners[1] = new Owner(2, "Jane Doe");
+        MysqlService.upsertOwners(owners);
     }
 
     @Test
     public void testdeleteDogs() {
-        MysqlService.deleteDogs();
+        testupsertDogs();
+        Set<Integer> dogIds = new HashSet<>(Arrays.asList(1,2));
+        MysqlService.deleteDogs(dogIds);
     }
 
     @Test
     public void testdeleteOwners() {
-        MysqlService.deleteOwners();
+        testupsertOwners();
+        Set<Integer> ownerIds = new HashSet<>(Arrays.asList(1,2));
+        MysqlService.deleteOwners(ownerIds);
     }
 }

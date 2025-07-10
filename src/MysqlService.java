@@ -152,7 +152,7 @@ public class MysqlService {
             query+=String.join(",", Collections.nCopies(ids.size(), "?"));
             query+=")";
         }
-        System.out.println("query: "+query); // SELECT id, name FROM owners WHERE id IN (?,?)
+        //System.out.println("query: "+query); // SELECT id, name FROM owners WHERE id IN (?,?)
 
         try {
             // Load MySQL JDBC Driver
@@ -184,16 +184,24 @@ public class MysqlService {
         return owners;
     }
 
-    public static void upsertDogs() {
+    public static void upsertDogs(Dog[] dogs) {
+        if (dogs!=null && dogs.length>0) {
 
+        }
     }
-    public static void upsertOwners() {
+    public static void upsertOwners(Owner[] owners) {
+        if (owners!=null && owners.length>0) {
 
+        }
     }
-    public static void deleteDogs() {
+    public static void deleteDogs(Set<Integer> ids) {
+        if (ids!=null && !ids.isEmpty()) {
 
+        }
     }
-    public static void deleteOwners() {
+    public static void deleteOwners(Set<Integer> ids) {
+        if (ids!=null && !ids.isEmpty()) {
 
+        }
     }
 }
