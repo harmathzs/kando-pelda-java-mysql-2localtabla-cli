@@ -3,7 +3,7 @@ import org.junit.jupiter.api.Test;
 public class MysqlTest {
     @Test
     public void testgetDogsAndOwners() {
-        MysqlService.getDogsAndOwners();
+        MysqlService.getDogsAndOwners("dogs_and_owners", "root", "");
     }
 
     @Test
