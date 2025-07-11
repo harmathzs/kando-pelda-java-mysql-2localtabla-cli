@@ -4,12 +4,12 @@ import java.util.*;
 public class MysqlService {
     public static boolean isRunningTest = false;
 
-    public static Map<String, List<Map<String, Object>>> getDogsAndOwners(String dbname, String username, String pass) {
+    public static Map<String, List<Map<String, Object>>> getDogsAndOwners(String hostname, String dbname, String username, String pass) {
         Map<String, List<Map<String, Object>>> results = new HashMap<>();
         results.put("dogs", new ArrayList<>());
         results.put("owners", new ArrayList<>());
 
-        String url = "jdbc:mysql://localhost:3306/"+dbname;
+        String url = "jdbc:mysql://"+hostname+":3306/"+dbname;
 
         String query = """
             SELECT
@@ -94,10 +94,10 @@ public class MysqlService {
         return results;
     }
 
-    public static List<Dog> queryDogs(String dbname, String username, String pass, Set<Integer> ids) {
+    public static List<Dog> queryDogs(String hostname, String dbname, String username, String pass, Set<Integer> ids) {
         List<Dog> dogs = new ArrayList<>();
 
-        String url = "jdbc:mysql://localhost:3306/" + dbname + "?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC";
+        String url = "jdbc:mysql://"+hostname+":3306/" + dbname + "?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC";
         // Build the SQL query
         StringBuilder sb = new StringBuilder();
         sb.append("SELECT d.id AS dog_id, d.name AS dog_name, d.age, d.male, ")
@@ -144,10 +144,10 @@ public class MysqlService {
         return dogs;
     }
 
-    public static List<Owner> queryOwners(String dbname, String username, String pass, Set<Integer> ids) {
+    public static List<Owner> queryOwners(String hostname, String dbname, String username, String pass, Set<Integer> ids) {
         List<Owner> owners = new ArrayList<>();
 
-        String url = "jdbc:mysql://localhost:3306/"+dbname;
+        String url = "jdbc:mysql://"+hostname+":3306/"+dbname;
         String query = "SELECT id, name FROM owners ";
         if (ids != null && !ids.isEmpty()) {
             query+="WHERE id IN (";
@@ -186,9 +186,9 @@ public class MysqlService {
         return owners;
     }
 
-    public static void upsertDogs(String dbname, String username, String pass, Dog[] dogs) {
+    public static void upsertDogs(String hostname, String dbname, String username, String pass, Dog[] dogs) {
         if (dogs != null && dogs.length > 0) {
-            String url = "jdbc:mysql://localhost:3306/" + dbname + "?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC";
+            String url = "jdbc:mysql://"+hostname+":3306/" + dbname + "?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC";
             String sql = "INSERT INTO dogs (id, name, age, male, ownerid) VALUES (?, ?, ?, ?, ?) " +
                     "ON DUPLICATE KEY UPDATE " +
                     "name = VALUES(name), age = VALUES(age), male = VALUES(male), ownerid = VALUES(ownerid)";
@@ -217,9 +217,9 @@ public class MysqlService {
         }
     }
 
-    public static void upsertOwners(String dbname, String username, String pass, Owner[] owners) {
+    public static void upsertOwners(String hostname, String dbname, String username, String pass, Owner[] owners) {
         if (owners!=null && owners.length>0) {
-            String url = "jdbc:mysql://localhost:3306/"+dbname+"?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC";
+            String url = "jdbc:mysql://"+hostname+":3306/"+dbname+"?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC";
             String sql = "INSERT INTO owners (id, name) VALUES (?, ?) " +
                     "ON DUPLICATE KEY UPDATE name = VALUES(name)";
 
@@ -238,9 +238,9 @@ public class MysqlService {
             }
         }
     }
-    public static void deleteDogs(String dbname, String username, String pass, Set<Integer> ids) {
+    public static void deleteDogs(String hostname, String dbname, String username, String pass, Set<Integer> ids) {
         if (ids != null && !ids.isEmpty()) {
-            String url = "jdbc:mysql://localhost:3306/" + dbname + "?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC";
+            String url = "jdbc:mysql://"+hostname+":3306/" + dbname + "?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC";
             String sql = "DELETE FROM dogs WHERE id IN (" + String.join(",", Collections.nCopies(ids.size(), "?")) +
                     ")";
 
@@ -259,9 +259,9 @@ public class MysqlService {
         }
     }
 
-    public static void deleteOwners(String dbname, String username, String pass, Set<Integer> ids) {
+    public static void deleteOwners(String hostname, String dbname, String username, String pass, Set<Integer> ids) {
         if (ids!=null && !ids.isEmpty()) {
-            String url = "jdbc:mysql://localhost:3306/" + dbname + "?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC";
+            String url = "jdbc:mysql://"+hostname+":3306/" + dbname + "?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC";
             String sql = "DELETE FROM owners WHERE id IN (" + String.join(",", Collections.nCopies(ids.size(), "?")) +
                     ")";
 
