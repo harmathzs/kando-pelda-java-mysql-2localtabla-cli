@@ -187,10 +187,36 @@ public class MysqlService {
     }
 
     public static void upsertDogs(String dbname, String username, String pass, Dog[] dogs) {
-        if (dogs!=null && dogs.length>0) {
+        if (dogs != null && dogs.length > 0) {
+            String url = "jdbc:mysql://localhost:3306/" + dbname + "?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC";
+            String sql = "INSERT INTO dogs (id, name, age, male, ownerid) VALUES (?, ?, ?, ?, ?) " +
+                    "ON DUPLICATE KEY UPDATE " +
+                    "name = VALUES(name), age = VALUES(age), male = VALUES(male), ownerid = VALUES(ownerid)";
 
+            try (Connection conn = DriverManager.getConnection(url, username, pass);
+                 PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+                for (Dog dog : dogs) {
+                    stmt.setInt(1, dog.getId());
+                    stmt.setString(2, dog.getName());
+                    stmt.setFloat(3, dog.getAge());
+                    stmt.setBoolean(4, dog.isMale());
+                    // If dog.getOwner() may be null, handle accordingly
+                    if (dog.getOwner() != null) {
+                        stmt.setInt(5, dog.getOwner().getId());
+                    } else {
+                        stmt.setNull(5, java.sql.Types.INTEGER);
+                    }
+                    stmt.addBatch();
+                }
+
+                if (!isRunningTest) stmt.executeBatch();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
         }
     }
+
     public static void upsertOwners(String dbname, String username, String pass, Owner[] owners) {
         if (owners!=null && owners.length>0) {
             String url = "jdbc:mysql://localhost:3306/"+dbname+"?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC";
