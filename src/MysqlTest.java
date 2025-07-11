@@ -1,10 +1,21 @@
 import com.mysql.cj.xdevapi.JsonParser;
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import java.util.*;
 
 public class MysqlTest {
+    @BeforeAll
+    public static void testBeforeAll() {
+        MysqlService.isRunningTest = true;
+    }
+    @AfterAll
+    public static void testAfterAll() {
+        MysqlService.isRunningTest = false;
+    }
+
     @Test
     public void testgetDogsAndOwners() {
         Map<String, List<Map<String, Object>>> results = MysqlService.getDogsAndOwners("dogs_and_owners", "root", "");
@@ -62,7 +73,7 @@ public class MysqlTest {
         Dog[] dogs = new Dog[2];
         dogs[0] = new Dog(1, "Fido", 1, true, null);
         dogs[1] = new Dog(2, "Fifi", 2, false, null);
-        MysqlService.upsertDogs(dogs);
+        MysqlService.upsertDogs("dogs_and_owners", "root", "", dogs);
     }
 
     @Test
@@ -70,20 +81,20 @@ public class MysqlTest {
         Owner[] owners = new Owner[2];
         owners[0] = new Owner(1, "John Smith");
         owners[1] = new Owner(2, "Jane Doe");
-        MysqlService.upsertOwners(owners);
+        MysqlService.upsertOwners("dogs_and_owners", "root", "", owners);
     }
 
     @Test
     public void testdeleteDogs() {
         testupsertDogs();
         Set<Integer> dogIds = new HashSet<>(Arrays.asList(1,2));
-        MysqlService.deleteDogs(dogIds);
+        MysqlService.deleteDogs("dogs_and_owners", "root", "", dogIds);
     }
 
     @Test
     public void testdeleteOwners() {
         testupsertOwners();
         Set<Integer> ownerIds = new HashSet<>(Arrays.asList(1,2));
-        MysqlService.deleteOwners(ownerIds);
+        MysqlService.deleteOwners("dogs_and_owners", "root", "", ownerIds);
     }
 }

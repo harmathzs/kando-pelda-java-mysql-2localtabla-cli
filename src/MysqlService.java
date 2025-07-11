@@ -2,6 +2,8 @@ import java.sql.*;
 import java.util.*;
 
 public class MysqlService {
+    public static boolean isRunningTest = false;
+
     public static Map<String, List<Map<String, Object>>> getDogsAndOwners(String dbname, String username, String pass) {
         Map<String, List<Map<String, Object>>> results = new HashMap<>();
         results.put("dogs", new ArrayList<>());
@@ -184,22 +186,38 @@ public class MysqlService {
         return owners;
     }
 
-    public static void upsertDogs(Dog[] dogs) {
+    public static void upsertDogs(String dbname, String username, String pass, Dog[] dogs) {
         if (dogs!=null && dogs.length>0) {
 
         }
     }
-    public static void upsertOwners(Owner[] owners) {
+    public static void upsertOwners(String dbname, String username, String pass, Owner[] owners) {
         if (owners!=null && owners.length>0) {
+            String url = "jdbc:mysql://localhost:3306/"+dbname+"?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC";
+            String sql = "INSERT INTO owners (id, name) VALUES (?, ?) " +
+                    "ON DUPLICATE KEY UPDATE name = VALUES(name)";
 
+            try (Connection conn = DriverManager.getConnection(url, username, pass);
+                 PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+                for (Owner owner : owners) {
+                    stmt.setInt(1, owner.getId());
+                    stmt.setString(2, owner.getName());
+                    stmt.addBatch();
+                }
+
+                if (!isRunningTest) stmt.executeBatch();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
         }
     }
-    public static void deleteDogs(Set<Integer> ids) {
+    public static void deleteDogs(String dbname, String username, String pass, Set<Integer> ids) {
         if (ids!=null && !ids.isEmpty()) {
 
         }
     }
-    public static void deleteOwners(Set<Integer> ids) {
+    public static void deleteOwners(String dbname, String username, String pass, Set<Integer> ids) {
         if (ids!=null && !ids.isEmpty()) {
 
         }
