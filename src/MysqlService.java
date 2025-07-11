@@ -239,13 +239,44 @@ public class MysqlService {
         }
     }
     public static void deleteDogs(String dbname, String username, String pass, Set<Integer> ids) {
-        if (ids!=null && !ids.isEmpty()) {
+        if (ids != null && !ids.isEmpty()) {
+            String url = "jdbc:mysql://localhost:3306/" + dbname + "?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC";
+            String sql = "DELETE FROM dogs WHERE id IN (" + String.join(",", Collections.nCopies(ids.size(), "?")) +
+                    ")";
 
+            try (Connection conn = DriverManager.getConnection(url, username, pass);
+                 PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+                int idx = 1;
+                for (int id : ids) {
+                    stmt.setInt(idx++, id);
+                }
+
+                if (!isRunningTest) stmt.executeUpdate();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
         }
     }
+
     public static void deleteOwners(String dbname, String username, String pass, Set<Integer> ids) {
         if (ids!=null && !ids.isEmpty()) {
+            String url = "jdbc:mysql://localhost:3306/" + dbname + "?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC";
+            String sql = "DELETE FROM owners WHERE id IN (" + String.join(",", Collections.nCopies(ids.size(), "?")) +
+                    ")";
 
+            try (Connection conn = DriverManager.getConnection(url, username, pass);
+                 PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+                int idx = 1;
+                for (int id : ids) {
+                    stmt.setInt(idx++, id);
+                }
+
+                if (!isRunningTest) stmt.executeUpdate();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
         }
     }
 }
