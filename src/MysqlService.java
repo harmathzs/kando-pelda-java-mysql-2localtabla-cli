@@ -7,7 +7,7 @@ public class MysqlService {
     public static Map<String, List<Map<String, Object>>> getDogsAndOwners(String hostname, String dbname, String username, String pass) {
         Map<String, List<Map<String, Object>>> results = new HashMap<>();
         results.put("dogs", new ArrayList<>());
-        results.put("owners", new ArrayList<>());
+        results.put("dog_owners", new ArrayList<>());
 
         String url = "jdbc:mysql://"+hostname+":3306/"+dbname;
 
@@ -18,12 +18,12 @@ public class MysqlService {
               dogs.age,
               dogs.male,
               dogs.ownerid,
-              owners.id AS owner_id,
-              owners.name AS owner_name
+              dog_owners.id AS owner_id,
+              dog_owners.name AS owner_name
             FROM
               dogs
             LEFT JOIN
-              owners ON dogs.ownerid = owners.id
+              dog_owners ON dogs.ownerid = dog_owners.id
             
             UNION
             
@@ -33,12 +33,12 @@ public class MysqlService {
               dogs.age,
               dogs.male,
               dogs.ownerid,
-              owners.id AS owner_id,
-              owners.name AS owner_name
+              dog_owners.id AS owner_id,
+              dog_owners.name AS owner_name
             FROM
-              owners
+              dog_owners
             LEFT JOIN
-              dogs ON dogs.ownerid = owners.id
+              dogs ON dogs.ownerid = dog_owners.id
             """;
         // WHERE dogs.id IS NULL;
 
@@ -78,7 +78,7 @@ public class MysqlService {
                 String owner_name = rs.getString("owner_name");
                 ownerMap.put("owner_name", owner_name);
 
-                if (owner_name!=null) results.get("owners").add(ownerMap);
+                if (owner_name!=null) results.get("dog_owners").add(ownerMap);
 
                 //System.out.println("dog_id: " + dog_id + ", dog_name: " + dog_name + ", owner_id: " + owner_id + ", owner_name: " + owner_name);
             }
@@ -102,7 +102,7 @@ public class MysqlService {
         StringBuilder sb = new StringBuilder();
         sb.append("SELECT d.id AS dog_id, d.name AS dog_name, d.age, d.male, ")
                 .append("o.id AS owner_id, o.name AS owner_name ")
-                .append("FROM dogs d LEFT JOIN owners o ON d.ownerid = o.id ");
+                .append("FROM dogs d LEFT JOIN dog_owners o ON d.ownerid = o.id ");
 
         if (ids != null && !ids.isEmpty()) {
             sb.append("WHERE d.id IN (");
@@ -116,7 +116,7 @@ public class MysqlService {
         ) {
             if (ids != null && !ids.isEmpty()) {
                 int idx = 1;
-                for (Integer id : ids) {
+                for (int id : ids) {
                     stmt.setInt(idx++, id);
                 }
             }
@@ -148,13 +148,13 @@ public class MysqlService {
         List<Owner> owners = new ArrayList<>();
 
         String url = "jdbc:mysql://"+hostname+":3306/"+dbname;
-        String query = "SELECT id, name FROM owners ";
+        String query = "SELECT id, name FROM dog_owners ";
         if (ids != null && !ids.isEmpty()) {
             query+="WHERE id IN (";
             query+=String.join(",", Collections.nCopies(ids.size(), "?"));
             query+=")";
         }
-        //System.out.println("query: "+query); // SELECT id, name FROM owners WHERE id IN (?,?)
+        //System.out.println("query: "+query); // SELECT id, name FROM dog_owners WHERE id IN (?,?)
 
         try {
             // Load MySQL JDBC Driver
@@ -167,7 +167,7 @@ public class MysqlService {
             PreparedStatement stmt = conn.prepareStatement(query);
             if (ids != null && !ids.isEmpty()) {
                 int idx = 1;
-                for (Integer id : ids) {
+                for (int id : ids) {
                     stmt.setInt(idx++, id);
                 }
             }
@@ -220,7 +220,7 @@ public class MysqlService {
     public static void upsertOwners(String hostname, String dbname, String username, String pass, Owner[] owners) {
         if (owners!=null && owners.length>0) {
             String url = "jdbc:mysql://"+hostname+":3306/"+dbname+"?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC";
-            String sql = "INSERT INTO owners (id, name) VALUES (?, ?) " +
+            String sql = "INSERT INTO dog_owners (id, name) VALUES (?, ?) " +
                     "ON DUPLICATE KEY UPDATE name = VALUES(name)";
 
             try (Connection conn = DriverManager.getConnection(url, username, pass);
@@ -262,7 +262,7 @@ public class MysqlService {
     public static void deleteOwners(String hostname, String dbname, String username, String pass, Set<Integer> ids) {
         if (ids!=null && !ids.isEmpty()) {
             String url = "jdbc:mysql://"+hostname+":3306/" + dbname + "?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC";
-            String sql = "DELETE FROM owners WHERE id IN (" + String.join(",", Collections.nCopies(ids.size(), "?")) +
+            String sql = "DELETE FROM dog_owners WHERE id IN (" + String.join(",", Collections.nCopies(ids.size(), "?")) +
                     ")";
 
             try (Connection conn = DriverManager.getConnection(url, username, pass);
