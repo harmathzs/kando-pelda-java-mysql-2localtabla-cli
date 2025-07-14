@@ -1,3 +1,6 @@
+### Credential exclusions ###
+Credentials.java
+
 ### IntelliJ IDEA ###
 out/
 !**/src/main/**/out/
