@@ -1,7 +1,14 @@
 import java.util.*;
 
 public class Main {
-    static boolean isRunningTest = false;
+    public static boolean isRunningTest = false;
+
+    static int testOwnerId = 1;
+    static String testOwnerName = "Jane Doe";
+    static int testDogId = 1;
+    static String testDogName = "Fido";
+    static float testDogAge = 1;
+    static boolean testDogMale = false;
 
     static int choice = 7;
     static List<Dog> dogs = new ArrayList<>();
@@ -61,7 +68,7 @@ public class Main {
             switch (choice) {
                 case 1: {
                     System.out.print("New owner name: ");
-                    String ownerName = stdin.nextLine();
+                    String ownerName = isRunningTest ? testOwnerName : stdin.nextLine();
                     Owner[] owners = new Owner[1];
                     owners[0] = new Owner(null, ownerName);
                     MysqlService.upsertOwners("localhost", "dogs_and_owners", "root", "", owners);
@@ -69,13 +76,13 @@ public class Main {
                 }
                 case 2: {
                     System.out.print("New dog name: ");
-                    String dogName = stdin.nextLine();
+                    String dogName = isRunningTest ? testDogName : stdin.nextLine();
                     System.out.print("Age: ");
-                    float dogAge = Float.parseFloat(stdin.nextLine());
+                    float dogAge = isRunningTest ? testDogAge : Float.parseFloat(stdin.nextLine());
                     System.out.print("Male (y/n): ");
-                    boolean dogMale = stdin.nextLine().equalsIgnoreCase("y");
+                    boolean dogMale = isRunningTest ? testDogMale : stdin.nextLine().equalsIgnoreCase("y");
                     System.out.print("Owner id: ");
-                    Integer ownerId = Integer.parseInt(stdin.nextLine());
+                    Integer ownerId = isRunningTest ? testOwnerId : Integer.parseInt(stdin.nextLine());
                     Owner dogOwner = null;
                     for (Owner owner: owners) {
                         if (Objects.equals(owner.getId(), ownerId)) {
@@ -89,9 +96,9 @@ public class Main {
                 }
                 case 3: {
                     System.out.print("Update owner. Id? ");
-                    int ownerId = Integer.parseInt(stdin.nextLine());
+                    int ownerId = isRunningTest ? testOwnerId : Integer.parseInt(stdin.nextLine());
                     System.out.print("New owner name: ");
-                    String ownerName = stdin.nextLine();
+                    String ownerName = isRunningTest ? testOwnerName : stdin.nextLine();
                     Owner[] owners = new Owner[1];
                     owners[0] = new Owner(ownerId, ownerName);
                     MysqlService.upsertOwners("localhost", "dogs_and_owners", "root", "", owners);
@@ -99,15 +106,15 @@ public class Main {
                 }
                 case 4: {
                     System.out.print("Update dog. Id? ");
-                    int dogId = Integer.parseInt(stdin.nextLine());
+                    int dogId = isRunningTest ? testDogId : Integer.parseInt(stdin.nextLine());
                     System.out.print("New dog name: ");
-                    String dogName = stdin.nextLine();
+                    String dogName = isRunningTest ? testDogName : stdin.nextLine();
                     System.out.print("Age: ");
-                    float dogAge = Float.parseFloat(stdin.nextLine());
+                    float dogAge = isRunningTest ? testDogAge : Float.parseFloat(stdin.nextLine());
                     System.out.print("Male (y/n): ");
-                    boolean dogMale = stdin.nextLine().equalsIgnoreCase("y");
+                    boolean dogMale = isRunningTest ? testDogMale : stdin.nextLine().equalsIgnoreCase("y");
                     System.out.print("Owner id: ");
-                    Integer ownerId = Integer.parseInt(stdin.nextLine());
+                    Integer ownerId = isRunningTest ? testOwnerId : Integer.parseInt(stdin.nextLine());
                     Owner dogOwner = null;
                     for (Owner owner: owners) {
                         if (Objects.equals(owner.getId(), ownerId)) {
@@ -121,13 +128,13 @@ public class Main {
                 }
                 case 5: {
                     System.out.print("Delete owner. Id? ");
-                    int ownerId = Integer.parseInt(stdin.nextLine());
+                    int ownerId = isRunningTest ? testOwnerId : Integer.parseInt(stdin.nextLine());
                     MysqlService.deleteOwners("localhost", "dogs_and_owners", "root", "", new HashSet<>(List.of(ownerId)));
                     break;
                 }
                 case 6: {
                     System.out.print("Delete dog. Id? ");
-                    int dogId = Integer.parseInt(stdin.nextLine());
+                    int dogId = isRunningTest ? testDogId : Integer.parseInt(stdin.nextLine());
                     MysqlService.deleteDogs("localhost", "dogs_and_owners", "root", "", new HashSet<>(List.of(dogId)));
                     break;
                 }
@@ -136,7 +143,7 @@ public class Main {
                     break;
                 }
             }
-            quit = choice == 7;
+            quit = choice == 7 || isRunningTest;
         } while (!quit);
     }
 }
