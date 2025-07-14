@@ -1,7 +1,11 @@
 import java.util.Collections;
 import java.util.List;
+import java.util.Scanner;
 
 public class Main {
+    public static boolean isRunningTest = false;
+    public static int choice = 7;
+
     public static void showData() {
         // dogs
         List<Dog> dogs = MysqlService.queryDogs("localhost", "dogs_and_owners", "root", "", Collections.emptySet());
@@ -26,7 +30,59 @@ public class Main {
         System.out.println("------");
     }
 
+    public static void showMenu() {
+        System.out.println("Menu");
+        System.out.println("-----");
+        System.out.println("1. Insert new Owner");
+        System.out.println("2. Insert new Dog");
+        System.out.println("3. Update existing Owner");
+        System.out.println("4. Update existing Dog");
+        System.out.println("5. Delete existing Owner");
+        System.out.println("6. Delete existing Dog");
+        System.out.println("7. Exit program");
+        System.out.println("-----");
+    }
+
     public static void main(String[] args) {
-        showData();
+        Scanner stdin = new Scanner(System.in);
+
+        boolean quit = false;
+        do {
+            showData();
+            showMenu();
+            System.out.print("Make your choice: ");
+            if (!isRunningTest) choice = stdin.nextInt();
+            switch (choice) {
+                case 1: {
+
+                    break;
+                }
+                case 2: {
+
+                    break;
+                }
+                case 3: {
+
+                    break;
+                }
+                case 4: {
+
+                    break;
+                }
+                case 5: {
+
+                    break;
+                }
+                case 6: {
+
+                    break;
+                }
+                case 7: {
+
+                    break;
+                }
+            }
+            quit = choice == 7;
+        } while (!quit);
     }
 }
