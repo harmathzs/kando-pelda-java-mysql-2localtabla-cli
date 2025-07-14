@@ -68,7 +68,23 @@ public class Main {
                     break;
                 }
                 case 2: {
-
+                    System.out.print("New dog name: ");
+                    String dogName = stdin.nextLine();
+                    System.out.print("Age: ");
+                    float dogAge = Float.parseFloat(stdin.nextLine());
+                    System.out.print("Male (y/n): ");
+                    boolean dogMale = stdin.nextLine().equalsIgnoreCase("y");
+                    System.out.print("Owner id: ");
+                    Integer ownerId = Integer.parseInt(stdin.nextLine());
+                    Owner dogOwner = null;
+                    for (Owner owner: owners) {
+                        if (Objects.equals(owner.getId(), ownerId)) {
+                            dogOwner = owner;
+                        }
+                    }
+                    Dog[] dogs = new Dog[1];
+                    dogs[0] = new Dog(null, dogName, dogAge, dogMale, dogOwner);
+                    MysqlService.upsertDogs("localhost", "dogs_and_owners", "root", "", dogs);
                     break;
                 }
                 case 3: {
