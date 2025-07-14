@@ -102,7 +102,9 @@ public class Main {
                     break;
                 }
                 case 6: {
-
+                    System.out.print("Delete dog. Id? ");
+                    int dogId = Integer.parseInt(stdin.nextLine());
+                    MysqlService.deleteDogs("localhost", "dogs_and_owners", "root", "", new HashSet<>(List.of(dogId)));
                     break;
                 }
                 case 7: {
