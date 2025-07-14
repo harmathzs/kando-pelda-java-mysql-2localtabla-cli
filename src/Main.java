@@ -51,10 +51,12 @@ public class Main {
             showData();
             showMenu();
             System.out.print("Make your choice: ");
-            if (!isRunningTest) choice = stdin.nextInt();
+            if (!isRunningTest) choice = Integer.parseInt(stdin.nextLine());
             switch (choice) {
                 case 1: {
-
+                    System.out.print("New owner name: ");
+                    String ownerName = stdin.nextLine();
+                    Owner newOwner = new Owner(null, ownerName);
                     break;
                 }
                 case 2: {

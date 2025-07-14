@@ -1,11 +1,11 @@
 public class Dog {
-    private int id;
+    private Integer id;
     private String name;
     private float age;
     private boolean male;
     private Owner owner;
 
-    public void setId(int id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 
@@ -48,7 +48,7 @@ public class Dog {
 
 
     public Dog(
-            int id,
+            Integer id,
             String name,
             float age,
             boolean male,
