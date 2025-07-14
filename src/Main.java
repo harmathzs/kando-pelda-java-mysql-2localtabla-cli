@@ -88,7 +88,13 @@ public class Main {
                     break;
                 }
                 case 3: {
-
+                    System.out.print("Update owner. Id? ");
+                    int ownerId = Integer.parseInt(stdin.nextLine());
+                    System.out.print("New owner name: ");
+                    String ownerName = stdin.nextLine();
+                    Owner[] owners = new Owner[1];
+                    owners[0] = new Owner(ownerId, ownerName);
+                    MysqlService.upsertOwners("localhost", "dogs_and_owners", "root", "", owners);
                     break;
                 }
                 case 4: {
