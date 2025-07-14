@@ -197,7 +197,11 @@ public class MysqlService {
                  PreparedStatement stmt = conn.prepareStatement(sql)) {
 
                 for (Dog dog : dogs) {
-                    stmt.setInt(1, dog.getId());
+                    if (dog.getId() == null) {
+                        stmt.setNull(1, java.sql.Types.INTEGER); // Let MySQL auto-generate the id
+                    } else {
+                        stmt.setInt(1, dog.getId());
+                    }
                     stmt.setString(2, dog.getName());
                     stmt.setFloat(3, dog.getAge());
                     stmt.setBoolean(4, dog.isMale());
@@ -227,10 +231,15 @@ public class MysqlService {
                  PreparedStatement stmt = conn.prepareStatement(sql)) {
 
                 for (Owner owner : owners) {
-                    stmt.setInt(1, owner.getId());
+                    if (owner.getId() == null) {
+                        stmt.setNull(1, java.sql.Types.INTEGER); // Let MySQL auto-generate the id
+                    } else {
+                        stmt.setInt(1, owner.getId());
+                    }
                     stmt.setString(2, owner.getName());
                     stmt.addBatch();
                 }
+
 
                 if (!isRunningTest) stmt.executeBatch();
             } catch (SQLException e) {

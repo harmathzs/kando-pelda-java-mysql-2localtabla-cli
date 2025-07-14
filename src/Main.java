@@ -56,7 +56,9 @@ public class Main {
                 case 1: {
                     System.out.print("New owner name: ");
                     String ownerName = stdin.nextLine();
-                    Owner newOwner = new Owner(null, ownerName);
+                    Owner[] owners = new Owner[1];
+                    owners[0] = new Owner(null, ownerName);
+                    MysqlService.upsertOwners("localhost", "dogs_and_owners", "root", "", owners);
                     break;
                 }
                 case 2: {
