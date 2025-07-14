@@ -8,7 +8,12 @@ public class Main {
         System.out.println("Dogs:");
         System.out.println("------");
         for (Dog dog: dogs) {
-            System.out.println("id: "+dog.getId());
+            System.out.println("id: "+dog.getId()
+                    +"; name: "+dog.getName()
+                    +"; age: "+dog.getAge()
+                    +"; male: "+dog.isMale()
+                    +"; owner: "+ (dog.getOwner()==null ? "-" : dog.getOwner().getName())
+            );
         }
         System.out.println("------");
         // dog_owners
@@ -16,7 +21,7 @@ public class Main {
         System.out.println("Owners:");
         System.out.println("------");
         for (Owner owner: owners) {
-            System.out.println("id: "+owner.getId());
+            System.out.println("id: "+owner.getId()+"; name: "+owner.getName());
         }
         System.out.println("------");
     }
