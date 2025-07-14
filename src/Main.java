@@ -1,14 +1,19 @@
-import java.util.Collections;
-import java.util.List;
-import java.util.Scanner;
+import java.util.*;
 
 public class Main {
-    public static boolean isRunningTest = false;
-    public static int choice = 7;
+    static boolean isRunningTest = false;
+
+    static int choice = 7;
+    static List<Dog> dogs = new ArrayList<>();
+    static List<Owner> owners = new ArrayList<>();
+
+    public static void refreshData() {
+        dogs = MysqlService.queryDogs("localhost", "dogs_and_owners", "root", "", Collections.emptySet());
+        owners = MysqlService.queryOwners("localhost", "dogs_and_owners", "root", "", Collections.emptySet());
+    }
 
     public static void showData() {
         // dogs
-        List<Dog> dogs = MysqlService.queryDogs("localhost", "dogs_and_owners", "root", "", Collections.emptySet());
         System.out.println("Dogs:");
         System.out.println("------");
         for (Dog dog: dogs) {
@@ -20,8 +25,8 @@ public class Main {
             );
         }
         System.out.println("------");
+
         // dog_owners
-        List<Owner> owners = MysqlService.queryOwners("localhost", "dogs_and_owners", "root", "", Collections.emptySet());
         System.out.println("Owners:");
         System.out.println("------");
         for (Owner owner: owners) {
@@ -48,6 +53,7 @@ public class Main {
 
         boolean quit = false;
         do {
+            refreshData();
             showData();
             showMenu();
             System.out.print("Make your choice: ");
@@ -74,7 +80,9 @@ public class Main {
                     break;
                 }
                 case 5: {
-
+                    System.out.print("Delete owner. Id? ");
+                    int ownerId = Integer.parseInt(stdin.nextLine());
+                    MysqlService.deleteOwners("localhost", "dogs_and_owners", "root", "", new HashSet<>(List.of(ownerId)));
                     break;
                 }
                 case 6: {
